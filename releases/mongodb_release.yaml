@@ -6,6 +6,7 @@
     namespace: test
     labels:
       chart: mongodb
+      test: foo
   spec:
     chartGitPath: mongodb
     releaseName: mongodb-database
