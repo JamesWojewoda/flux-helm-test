@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "name" . }}
+  labels:
+    k8s-app: {{ template "name" . }}
+    prometheus-app: {{ template "name" . }}
+    dns: elb-route53
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+    dns.vonage.io/domainName: {{ .Values.dns | quote }}
+spec:
+  ports:
+  {{- if .Values.hmacProxyEnabled }}    
+  - name: http-hmac
+    port: 8080
+    targetPort: http-hmac
+    protocol: TCP
+  {{- else }}  
+  - name: http-metrics
+    port: 8080
+    targetPort: http-metrics
+    protocol: TCP
+   {{- end }}   
+  selector:
+    k8s-app: {{ template "name" . }}
+  type: "LoadBalancer"
+    

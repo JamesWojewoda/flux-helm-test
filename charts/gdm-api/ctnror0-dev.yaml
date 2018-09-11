@@ -1,0 +1,112 @@
+##if hmacProxyEnabled is true make sure serverPort is 8081 if false its 8080
+hmacProxyEnabled: true
+serverPort: 8081
+##################
+
+## log level
+springLogLevel: ERROR
+
+iam:
+  role: arn:aws:iam::080385600816:role/k8s-lnp-mgmt
+  
+s3bucket: gdm-api-audit-entva0
+
+## db URL 
+oracleDbURL: jdbc:oracle:thin:@//devloco-vdv.db.dev.vonagenetworks.net:1521/DEVLOCO-VDV
+mysqlDbURL: jdbc:mysql://didmanagement.devdc.vocal-dev.com/gdm
+
+## didMgmt url
+didMgmtURL: http://bss-services-vm-01.dloco.s.vonagenetworks.net:7007
+callRoutingAPICallActivation: true
+
+## nexmo url
+nexmoHost: https://api.dev.nexmoinc.net
+nexmoAPICallActivation: true
+nexmoAPICallActivation: true
+tokenReqAsGet: true
+
+## netnumber url 
+netNumbersHost: http://netnumbers-gateway-api.ctnror0.dev.vonagenetworks.net:8080/netnumbers-gateway-api/v1
+netNumbersAddHmac: true
+netNumbersAPICallActivation: true
+
+##sonus call url 
+psxHost: http://emsvm01.qa.s.vonagenetworks.net:80/emsapi/services/PSXAPI/r10_00_03
+psxName: PSX05KEWR1
+psxAPICallActivation: true
+
+## async host
+gdmHost: http://gdm-api.ctnror0.dev.vonagenetworks.net:8080
+AsyncDelaySec: 5,10,20,30,40,50
+apeHost: https://ape-clusterip.ctnror0.dev.vonagenetworks.net
+apeActive: true
+
+## k8s values 
+dns: gdm-api.ctnror0.dev.vonagenetworks.net
+limitCpu: 0.5
+limitMemory: 900Mi
+requestCpu: 0.05
+requestMemory: 300Mi
+replicasSet: 2
+imagegdmapi:
+  repository: 080385600816.dkr.ecr.us-east-1.amazonaws.com/gdm-api
+  tag: dev
+  pullPolicy: Always
+
+## hmac proxy
+imagehmac:
+  repository: 080385600816.dkr.ecr.us-east-1.amazonaws.com/hmac-proxy
+  tag: 0.0.27
+etcdUser: GDM_APIdev
+etcdEnv: dev
+hmacURLWl: '/healthz,/health,/metrics,/process-status,.*/swagger-ui.html,.*/api-docs,.*/springfox-swagger-ui/.*,.*/swagger-resources.*'
+HmacSchema: PI
+HmacToken: GDM_API
+hmac:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+  command:
+    debugLevel: 10  
+
+## zipwhip
+zipWhipHost: https://provision.zipwhip.com
+zipWhipActive: false
+
+## hdap
+hdapHost: http://aio1ac132.devvpc.vocal-dev.com:8080
+hdapActive: true
+
+## ape quque name 
+zipwhipQueueName: zipwhip
+nexmoName: nexmo
+hdapNotifyQueueName: hdapNotify
+netnumbersQueueName: netnumbers
+didManagementQueueName: didManagement
+sonusQueueName: sonus
+s3BucketQueueName: s3Bucket
+zeusQueueName: zeus
+neustarQueueName: neustar
+
+
+## neustar host
+neustarHost: https://uat.lidb.neustar.biz:9443/soap/LidbCnamProvisioningService?wsdl
+neustarAPICallActivation: false
+neustarCnamCid: 28686
+
+
+## zeus
+zeusHost: https://master-hermes.hydra.dev.vonagenetworks.net
+zeusCallBackActivation: true
+
+## bitnami sealed secret
+secrets:
+  namespace: dev-gdm
+  value: 
+    gdm: AgAT57hAjJ0dzG8EOczWm2BzkFc/0uSEXMnrZM7pW0ScaOdwzbIKSNtySdFgfescgZsJhaOfLoFnk/UpWxIM+UcJHXvn1DNkF6Gp7WZjI0ReAHKla9h25sqGIhdO/WDMtdhM+yDZckCKl8kggXFXYcrnYWdymsrvv8DyD5zDhdXlDy2X0O4TmyfElrj1rSGzAF3X/ytq+SnCjYfcvpMoyD9cR+0kFkEt2yCqUmWvecH6dGqEJSwwpjilP7EV4MT1DRO37VkRED6DhPXOrga8FnlNgtwRgRxQBDU5YipQrScz6iVOBze5wM0zZKXxX+w5hb7rS4m/aWuwm7Z2u2ynIXhBzaXAXdaie/d/vSuW0qd7/Xx9P3B7oA0Ed9/SNwroqYzQhvYLblOcg3U/8z9dVU/ECkfvdz9VRFVvjCF0g6KKDkhEubalIk34KWyXjar/xm0sJYgdGY40MbRpsG5kyIthl3cTkpW21nUVvgQVG/b6Dugc7LX+U4/lMfR3aQzbGr+nbIDB5c1qA6ooTREUYvRPT30jZfzDY3UoffVFI6nIN4PZX+uGhr7DP5FROWOOL2hkSF1etvd7q5cneNZU7aBYdMKqOake9X/kp9PU84kUuO+LOG8e9sMLPEf82ojVu2doXRkJm5dbZAXIs6A86aBz4BnlBEZQjwUzyr284wDGVQpFzLLG9pQ1TQzDGWjF1msH9WVjZopGfXmLVaTpd5t02IOQ0USXmaAIaogcr5yC5oqaPpixeQegRPT8csSWYKNEsrNzkpYZOZ4iahDRYnggxhRqLsm3OvTXLN+5qnAodKmvPgyMmlf/BSzdSRf5rBzceRneoQmVT3KQm/FoFBdGv/Absvlx7Tnh6f9h97thtCD5Tkz9W4IT7ic5NALMmtNU8kkcLzinmRDWWqLhtpCm/kiqupRZzu+TwA9cgxQvK1PJz6NvC8aVR+QzwwsDkyI123PNKIgnAtQtEFKNRxx/v7ZzBNkdMOKj/cABACvlsknvrG6LCGtT3QX0mtHThpsSH2175FMORvlBXAP32MwIpXUJeWuxJGXhkv6nuygSoi7W2j7UYI1d5/jPzRG+uEhaFi3bsLMLWwYQfHz29wp1UeQyNU7DDo07NWgGaPAGCd+WS3RvLVk66doWIrgOwxW9IbHDWLKt3zLafE65dHx+QwjNyt0TwwwLfXTHidTiVe+X2pz4BIVBGn4J51vXjonKVr2Qpn1dly7wEVRcwsR1MfyOjbj250SngLLS9OJwmg5c41vLxZmpZLQ7gkiO7wUBhJVnwiyiTJNmQSDqolpsZhbg/eEwMGDFtx2nJs6yYcLipI/W/40n5FYq8GE7tAyIrnUMiZCBRMBfyNM4k3XWj/+sOhCAc9GHoRhe3Uu5eriM7aORYh4d
+
+isDev: true

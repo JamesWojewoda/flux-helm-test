@@ -1,0 +1,108 @@
+##if hmacProxyEnabled is true make sure serverPort is 8081 if false its 8080
+hmacProxyEnabled: false
+serverPort: 8080
+##################
+
+## log level
+springLogLevel: ERROR
+
+s3bucket: gdm-api-prod-entva0
+
+iam:
+  role: arn:aws:iam::517665981599:role/k8s-lnp-mgmt
+
+## db URL 
+oracleDbURL: jdbc:oracle:thin:@//vdv.prim.db.vonagenetworks.net:1521/VDV
+mysqlDbURL: jdbc:mysql://didmanagement-prod.caifhuxxkbg2.us-east-1.rds.amazonaws.com:3306/gdm
+
+## didMgmt url
+didMgmtURL: http://unified-services.klas1.s.vonagenetworks.net:8080
+callRoutingAPICallActivation: true
+
+## nexmo url
+nexmoHost: https://api.nexmo.com
+nexmoAPICallActivation: true
+tokenReqAsGet: false
+
+## netnumber url 
+netNumbersHost: http://netnumbers-gateway-api.ctnror0.prod.vonagenetworks.net:8080/netnumbers-gateway-api/v1
+netNumbersAddHmac: true
+netNumbersAPICallActivation: true
+
+##sonus call url 
+psxHost: http://emsvm01.kiad0.s.vonagenetworks.net:80/emsapi/services/PSXAPI/r10_00_03
+psxName: PSX01KLAS0
+psxAPICallActivation: true
+
+## async host
+gdmHost: http://gdm-api.ctnror0.prod.vonagenetworks.net:8080
+AsyncDelaySec: 5,300,900,3600,10800,21600
+apeHost: https://ape-clusterip.ctnror0.prod.vonagenetworks.net
+apeActive: true
+
+
+## k8s values 
+dns: gdm-api.ctnror0.prod.vonagenetworks.net
+limitCpu: 0.5
+limitMemory: 1Gi
+requestCpu: 0.1
+requestMemory: 400Mi
+replicasSet: 6
+imagegdmapi:
+  repository: 080385600816.dkr.ecr.us-east-1.amazonaws.com/gdm-api
+  tag: 7.0.6
+  pullPolicy: Always
+  
+## hmac proxy
+imagehmac:
+  repository: 080385600816.dkr.ecr.us-east-1.amazonaws.com/hmac-proxy
+  tag: 0.0.27
+etcdUser: GDM_APIklas0
+etcdEnv: klas0
+hmacURLWl: '/healthz,/health,/metrics,/process-status,.*/swagger-ui.html,.*/api-docs,.*/springfox-swagger-ui/.*,.*/swagger-resources.*'
+HmacSchema: PI
+HmacToken: GDM_API
+hmac:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+  command:
+    debugLevel: 10
+
+## zipwhip
+zipWhipHost: https://provision.zipwhip.com
+zipWhipActive: true
+
+## hdap
+hdapHost: https://hdapui-int-pci.amz1.vocalocity.com
+hdapActive: true
+
+## zeus
+zeusHost:  https://hermes.vonage.com
+zeusCallBackActivation: true
+
+## neustar host
+neustarHost: https://lidb.neustar.biz:9443/soap/LidbCnamProvisioningService?wsdl
+neustarAPICallActivation: true
+neustarCnamCid: 28686
+
+## ape quque name 
+zipwhipQueueName: zipwhip
+nexmoName: nexmo
+hdapNotifyQueueName: hdapNotify
+netnumbersQueueName: netnumbers
+didManagementQueueName: didManagement
+sonusQueueName: sonus
+s3BucketQueueName: s3Bucket
+zeusQueueName: zeus
+neustarQueueName: neustar
+
+## bitnami sealed secret
+secrets:
+  namespace: gdm
+  value: 
+    gdm: AgAUjTWBvd6v9TUgjaxa9TSfkVqBJBt4+wJCUDRhj5IrXP7DyWsDDWysZ1A2peEPUtRYPJiz0K95sfAnKDMf3M2vcb2XiHdvZqyGW6wlZUuGvzKxX6ScGshA0+BCT7TVCUnCbVRKdtIeMPBqt9YP8kX4ZWfftJth7Kf1Ht65Ug0CkxoJa65LBu90VF+94cw0ELNNTQ/VxKrHvaaB3ZE+4ix7pkeMIfyQDwNBdS9/jZNdN/TaYx5xhnbPo+dHs4GJsIT2eFw72o9b1VUTjSv5W726CeGqF0R+31XfTsHBVpIEIV7V7h469rQ05kST6JiS30zgRKIJ2SocgrhXEhPmfyD+zDwG40WUDJgDR4Zt+hgVthBcB6QE56qzzCbMcQSzZjhgWCPbKl8X09q4EEuVyoE5rxiDjk0MQZUpelWcCwVno95g64VVSHGbKVM5yY+JB2kNJaNpp7Vm7m3/igIlK3VDEnC8BjufIifG+2q+W1/BtTCsEunDOA2G/AzC48VRo99dd+CBzm/vzPNh0ODXN0jOVamJkDI1rjwqedS6DF+n+Tel5G2+lA0PVzj1hVa+DJTC/Sibq6AV4WtsHwU08ptkywJN8G2p3xuSx3leahNSEZZJRH7rRDScHKm6Cx4eo/nUWBszlMyvG17bHnn9rroHHfVKC8IOrdQ5MB8f3QI5sjrH21EQpOg89qK1eH9hwu98q2PnaqbEPfTJaoKF/KsMurU2yeg7xj0Rd9Bsjb3FNwsEdIRUqGIbymMZo0KWd+bXAz+fR7q5HRBd8Eciwa5oI+uIcGXJrgB0AzNjGD+L0FO6+O6nJp8INdFdUZ7gXz48otXDdMMt1Xndgeh4dg2mRZPZwc7LQucE+fhK04Z848mK/Nmit9Xjbemp0ln1yBJcLFallY+3gP7kHufpSF0vaDGfFbaoqu/syGq6t2JfuMw4+KmY3B4mxeXDTxK2V/6w5d+Vb30cahicjxchMSv3icz6BO6crbHFmejExP9KdF7AJ5yUINPBcXgsL+Wnd2THQfpVZ9MgFZdcpvRRkyWw67Ig/OaViQ1qk+txgvxGoZm+IzKNmbY+Ds4qR8UaAQw97YO9TRE6fjlQoYC24WeHiK4G8/sCNBarZGW4vHNXDbrxGCbaKPayrGUiF5N/AF5CNGyCcctFEwkzCUidGt3G++QMNcDxprzWM4g9OhTl3SmhlCcT0J/niOY/VPd9N9FlCCM8Iy0vBCtDhlDEUqaaEQCuPFXyqFZpiVLljqjKNVvNfnFR6Xfbk0gqSpLRKn2WC422oJJJJq8Wk8iXtt50CrM6v8aeAAZfTWor7hdDKpNY2faC7hPC/MG7QIhoBDPiYUmieYs983yjYQDTMpm8fErGdHdjpJCT0HvzCMBvH/Hmdmg=

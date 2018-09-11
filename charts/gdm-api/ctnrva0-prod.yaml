@@ -1,0 +1,108 @@
+##if hmacProxyEnabled is true make sure serverPort is 8081 if false its 8080
+hmacProxyEnabled: false
+serverPort: 8080
+##################
+
+## log level
+springLogLevel: ERROR
+
+s3bucket: gdm-api-prod-entva0
+
+iam:
+  role: arn:aws:iam::517665981599:role/k8s-lnp-mgmt
+
+## db URL 
+oracleDbURL: jdbc:oracle:thin:@//vdv.prim.db.vonagenetworks.net:1521/VDV
+mysqlDbURL: jdbc:mysql://didmanagement-prod.caifhuxxkbg2.us-east-1.rds.amazonaws.com:3306/gdm
+
+## didMgmt url
+didMgmtURL: http://unified-services.klas1.s.vonagenetworks.net:8080
+callRoutingAPICallActivation: true
+
+## nexmo url
+nexmoHost: https://api.nexmo.com
+nexmoAPICallActivation: true
+tokenReqAsGet: false
+
+## netnumber url 
+netNumbersHost: http://netnumbers-gateway-api.ctnrva0.prod.vonagenetworks.net:8080/netnumbers-gateway-api/v1
+netNumbersAddHmac: true
+netNumbersAPICallActivation: true
+
+##sonus call url 
+psxHost: http://emsvm01.kiad0.s.vonagenetworks.net:80/emsapi/services/PSXAPI/r10_00_03
+psxName: PSX01KLAS0
+psxAPICallActivation: true
+
+## async host
+gdmHost: http://gdm-api.ctnrva0.prod.vonagenetworks.net:8080
+AsyncDelaySec: 5,300,900,3600,10800,21600
+apeHost: https://ape-clusterip.ctnrva0.prod.vonagenetworks.net
+apeActive: true
+
+
+## k8s values 
+dns: gdm-api.ctnrva0.prod.vonagenetworks.net
+limitCpu: 0.5
+limitMemory: 1Gi
+requestCpu: 0.1
+requestMemory: 400Mi
+replicasSet: 6
+imagegdmapi:
+  repository: 080385600816.dkr.ecr.us-east-1.amazonaws.com/gdm-api
+  tag: 7.0.6
+  pullPolicy: Always
+  
+## hmac proxy
+imagehmac:
+  repository: 080385600816.dkr.ecr.us-east-1.amazonaws.com/hmac-proxy
+  tag: 0.0.27
+etcdUser: GDM_APIklas0
+etcdEnv: klas0
+hmacURLWl: '/healthz,/health,/metrics,/process-status,.*/swagger-ui.html,.*/api-docs,.*/springfox-swagger-ui/.*,.*/swagger-resources.*'
+HmacSchema: PI
+HmacToken: GDM_API
+hmac:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+  command:
+    debugLevel: 10
+
+## zipwhip
+zipWhipHost: https://provision.zipwhip.com
+zipWhipActive: true
+
+## hdap
+hdapHost: https://hdapui-int-pci.amz1.vocalocity.com
+hdapActive: true
+
+## zeus
+zeusHost:  https://hermes.vonage.com
+zeusCallBackActivation: true
+
+## neustar host
+neustarHost: https://lidb.neustar.biz:9443/soap/LidbCnamProvisioningService?wsdl
+neustarAPICallActivation: true
+neustarCnamCid: 28686
+
+## ape quque name 
+zipwhipQueueName: zipwhip
+nexmoName: nexmo
+hdapNotifyQueueName: hdapNotify
+netnumbersQueueName: netnumbers
+didManagementQueueName: didManagement
+sonusQueueName: sonus
+s3BucketQueueName: s3Bucket
+zeusQueueName: zeus
+neustarQueueName: neustar
+
+## bitnami sealed secret
+secrets:
+  namespace: gdm
+  value: 
+    gdm: AgCErl1i/KxJknB1LBV1hmkHTTz8FU+RJsGoRy8wTEiRUf1R4czVSIlbFy/zV9oIpdhkizK2UAnOG7wZo3DDeKafjSGZARWPqQjetJyARwXD7X4NMafyWZpvMZBcFAWhRP/36KC84lpuNJqqAJmFZhWQ4nJevtmayndRtJG6zr2TLd8+NjPowCtXYrY0ELFN/wBxvfIaXs6UaBhkyZY2Q3pw0zSelHzYp81yHCMYE+xc+/mZJ/Do9e2yxPY48if+/rCR/o6X3RIGt+1TIyvsRIPy01UXZCF+FTG+H4r5+Q3BYqgtu0/c1vV6LN/IkG3cJh2d762HT/94yNg+C5qKW6E5knuTkyRRSVxMGmaSFoLHGEsm9IDe5pJaZTlXh6YdkEKTA4nKLpyqKrxiQ9GsAdD+lmzljofDtXuzk3HdOW2oFvD9LDiq++TmMJP3eca0Ak4MF/QoeUuJxA/NI9To3CG0IOnDWLQZ9BgswegN1UONV5kZmtb5mLhR+2jy7jPSlN4YncBIT9BvyRyd808h+Yu4spmBAX1oKQPVcdkA4q0eZG/RAQ/B9xt+d+8wZ1Pwx3OxLah5QN102oyHfw/VOZsziNNIFFTzEUHS7JFiKYj+isSHw1YNhTlZrjaNYr49eWD6XL1K81CPKeLaU9eMDBAM2fz9LHnFliMpauqx38SmBU9nbSDXxwCMFUYNOv7H4nATzZWiLeTzfgm+XbRUPl/LIPYb/xsb9YwHXEgneB8LakiEF6XYZSlzVOhgViHrZz7W0mLxv9dkZjN8NAtTWtZqrQSWBhUFSpd1lD5JUxGmRNHkdb/n4zDq12jb30sRuMy8/UW6qdtTqXqd4hb7Ejz526670+dKrnKz75HMeHivCadeRcdPt9F0EPFvWKyjrd4juyKC+6qSw5ptF8pux9a5zpl2mxKDZf/3KR3bP/VXSOaQSrrWFInHvysq/sTbj1HLWMc24hkjP1VNSlxCuIzLZ8M3v5e5taWxDz2iJRLo7+Bwq2ojAR2455YcXl0uy11wVwKdxGsWdj78416n4g9sI4rAFq6T6JFxfch9j21va44da3mspg5BTGss2YxluhmLH2ytt5R6U7CFHnk7iS4o65klhK2xKoqaNYKhE9x84Ohw05ygfYDXtbWvGARZSPG6U7X8BF/kOk2F4b1cxx6Ci8MZYx2WD0SVAszJxv/XEVO2n9GO4S+rK5HNiWGToUosOXMM89xfbq9xO682gbzTrgb9AlTvEJ2BhpbgnFAfyCnyi7hSmz16oN04XYj5xN7UdIqfjioLVsO25nv7PPVA9z8lHvEfSZvnWNYiAXi20MElsA7Wa7F32NJUMqglerWG7Lb03RaKQfAEHn5M6nA7XL/itEgGbK8d8kVTAatfJitNWQQeygzmZa/Tmvx7T4mBGN+qANDOvjFyuFb47vYFVC+OsRvIHt82AmA6vS2LZrR9ED2uklD9xWctClp0oSvMZn6KZlCRpadIqaFObJoUAGg2GfjqmoDRnO8w2Q1quEWUJZCCmkiuJkqSdxRTw7LJGqsyEHUoa5mQ64beHlI7xeCKtN/Eu+lPJBok0UyL98cXsOnHL20zsOo=

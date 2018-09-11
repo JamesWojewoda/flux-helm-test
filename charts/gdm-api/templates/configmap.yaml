@@ -1,0 +1,149 @@
+apiVersion: v1
+data:
+  template: |-
+    # DB configuration
+    app.oracle.datasource.url={{ .Values.oracleDbURL }}
+    app.oracle.datasource.username={{ `{{secret "gdm-api" "oracle_username"}}` }}
+    app.oracle.datasource.password={{ `{{secret "gdm-api" "oracle_password"}}` }}
+    app.oracle.datasource.driverClassName=oracle.jdbc.driver.OracleDriver
+    app.oracle.datasource.validationQuery=SELECT 1 FROM DUAL
+    app.oracle.datasource.testWhileIdle=true
+    app.oracle.datasource.testOnBorrow=true
+    app.oracle.datasource.initialSize=0
+    app.oracle.datasource.maxActive=15
+    app.oracle.datasource.minIdle=0
+    app.oracle.datasource.maxIdle=5
+    app.oracle.datasource.maxAge=60000
+    
+    # mysql aurora DB configuration
+    app.mysql.datasource.url={{ .Values.mysqlDbURL }}
+    app.mysql.datasource.username={{ `{{secret "gdm-api" "mysql_username"}}` }}
+    app.mysql.datasource.driverClassName=com.mysql.jdbc.Driver
+    app.mysql.datasource.password={{ `{{secret "gdm-api" "mysql_password"}}` }}
+    app.mysql.datasource.validationQuery=SELECT 1 FROM DUAL
+    app.mysql.datasource.testWhileIdle=true
+    app.mysql.datasource.testOnBorrow=true
+    app.mysql.datasource.initialSize=0
+    app.mysql.datasource.maxActive=20
+    app.mysql.datasource.minIdle=0
+    app.mysql.datasource.maxIdle=5
+    app.mysql.datasource.maxAge=60000
+    
+    ## aysnc queune name 
+    zipwhip.groupId={{ .Values.zipwhipQueueName }}
+    nexmo.groupId={{ .Values.nexmoName }}
+    hdapNotify.groupId={{ .Values.hdapNotifyQueueName }}
+    netnumbers.groupId={{ .Values.netnumbersQueueName }}
+    didManagement.groupId={{ .Values.didManagementQueueName }}
+    sonus.groupId={{ .Values.sonusQueueName }}
+    s3Bucket.groupId={{ .Values.s3BucketQueueName }}
+    zeus.groupId={{ .Values.zeusQueueName }}
+    neustar.groupId={{ .Values.neustarQueueName }}
+    
+    
+    ##logging
+    logging.level.com.vonage.gdm=DEBUG
+    logging.level.org.springframework.web={{ .Values.springLogLevel }}
+    
+    ## htttpClient
+    httpClient.maxTotalConnections=100
+    httpClient.maxTotalConnectionsPerRoute=20
+    httpClient.readTimeoutInMillis=20000
+    httpClient.connectionTimeoutInMillis=10000
+    httpClient.keepAlive=5000
+    
+    ## spring boot management config
+    server.port={{ .Values.serverPort }}
+    management.security.enabled=false
+    management.port=8082
+    
+    ## APEClient
+    APEClient.host={{ .Values.apeHost }}
+    APEClient.active={{ .Values.apeActive }}
+    apeClient.addHmac=true
+    
+    ## zipwhip client
+    zipWhip.host={{ .Values.zipWhipHost }}
+    zipWhip.version=20140925
+    zipWhip.active={{ .Values.zipWhipActive }}
+    zipWhip.key={{ `{{secret "gdm-api" "zipwhip_key"}}` }}
+    
+    ## hdap host
+    hdap.host={{ .Values.hdapHost }}
+    hdapCall.active={{ .Values.hdapActive }}
+    hdap.addHmac=true
+    hdap.hmac.schema=hdap
+    hdap.hmac.contentMD5ForBlank=true
+    vbs.accountId={{ `{{secret "gdm-api" "vbsSmsAccountId"}}` }}
+    
+    ## EMS system configuration to setup CNAM dip
+    psx.host={{ .Values.psxHost }}
+    psx.name={{ .Values.psxName }}
+    psx.username={{ `{{secret "gdm-api" "psx_username"}}` }}
+    psx.password={{ `{{secret "gdm-api" "psx_password"}}` }}
+    psx.active={{ .Values.psxAPICallActivation }}
+    sonus.partitionId=DEFAULT
+    
+    ## DID Management configuration to setup call rotuing 
+    setUpCallRouting.active={{ .Values.callRoutingAPICallActivation }}
+    didMgmt.host={{ .Values.didMgmtURL }}
+    
+    ## nexmo api call
+    nexmo.apiKey={{ `{{secret "gdm-api" "nexmo_api_key"}}` }}
+    nexmo.apiSecret={{ `{{secret "gdm-api" "nexmo_api_secret"}}` }}
+    nexmo.host={{ .Values.nexmoHost }}
+    nexmoAPICall.active={{ .Values.nexmoAPICallActivation }}
+    nexmo.tokenReqAsGet={{ .Values.tokenReqAsGet }}
+    premier.accountId={{ `{{secret "gdm-api" "premierSmsAccountId"}}` }}
+    setUpCallBackAPI.active={{ .Values.callBackAPICallActivation }}
+    
+    ## netNUmbers
+    netNumbers.host={{ .Values.netNumbersHost }}
+    netNumbersAPICall.active={{ .Values.netNumbersAPICallActivation }}
+    netNumber.addHmac={{ .Values.netNumbersAddHmac}}
+    
+    AsyncDelaySec={{ .Values.AsyncDelaySec }}
+    callBackAuthType=hmac
+    
+    gdm.host={{ .Values.gdmHost }}
+    gdm.exclude.logging.pattern=(.*?/health|.*?/metrics)
+    
+    neustar.host={{ .Values.neustarHost }}
+    neustar.active={{ .Values.neustarAPICallActivation }}
+    neustar.username={{ `{{secret "gdm-api" "neustar_userName"}}` }}
+    neustar.password={{ `{{secret "gdm-api" "neustar_password"}}` }}
+    neustar.cnamCid={{ .Values.neustarCnamCid}}
+    neustar.successResponseCode=00_,01_,04_,05_,06_,07_
+    
+    zeus.host={{ .Values.zeusHost }}
+    zeus.active={{ .Values.zeusCallBackActivation }}
+    zeus.addHmac=true
+
+    ## ETCD configruation 
+    hmac.token=GDM_API
+    hmac.etcdUser={{ `{{secret "gdm-api" "hmac_etcdUser"}}` }}
+    hmac.etcdPassword={{ `{{secret "gdm-api" "hmac_etcdPassword"}}` }}
+    hmac.env={{ .Values.etcdEnv }}
+    hmac.etcdEndpoint=http://etcd-proxy-v2.security:2377
+    hmac.maxConnections=20
+    hmac.trustAll=true
+    hmac.skipAuthorization=true
+    hmac.skipAuthentication=false
+    hmac.cachePermission=true
+    hmac.cacheAuthentication=true
+    hmac.authenticationCacheTimeout=3600
+    hmac.authorizationCacheTimeout=3600
+    hmac.contentMD5ForBlank=false
+    
+    
+kind: ConfigMap
+metadata:
+  name: {{ template "name" . }}-tmpl
+  annotations:
+    konfd.io/kind: configmap
+    konfd.io/name: {{ template "name" . }}
+    konfd.io/key: application.properties
+  labels:
+    konfd.io/template: "true"
+
+

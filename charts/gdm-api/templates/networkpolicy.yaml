@@ -1,0 +1,25 @@
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+apiVersion: networking.k8s.io/v1
+{{- else }}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: NetworkPolicy
+metadata:
+  name: {{ template "name" . }}
+spec:
+  podSelector:
+    matchLabels:
+      k8s-app: {{ template "name" . }}
+  ingress:
+    - ports:
+      - protocol: TCP
+        port: 8080
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: default-deny
+spec:
+  podSelector:
+{{- end }}

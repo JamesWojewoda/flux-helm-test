@@ -1,0 +1,108 @@
+##if hmacProxyEnabled is true make sure serverPort is 8081 if false its 8080
+hmacProxyEnabled: false
+serverPort: 8080
+##################
+
+## log level
+springLogLevel: ERROR
+
+iam:
+  role: arn:aws:iam::080385600816:role/k8s-lnp-mgmt
+  
+s3bucket: gdm-api-audit-entva0
+
+## db URL 
+oracleDbURL: jdbc:oracle:thin:@//vdv-scan.kewr5.s.vonagenetworks.net:1521/PREPROD-VDV
+mysqlDbURL: jdbc:mysql://didmanagement.qa6.vocal-qa.com/gdm
+
+## didMgmt url
+didMgmtURL: http://unified-services.kewr5.s.vonagenetworks.net:8080
+callRoutingAPICallActivation: true
+
+## nexmo url
+nexmoHost: https://api.dev.nexmoinc.net
+nexmoAPICallActivation: true
+tokenReqAsGet: true
+
+## netnumber url 
+netNumbersHost: http://netnumbers-gateway-api.ctnror0.qa.vonagenetworks.net:8080/netnumbers-gateway-api/v1
+netNumbersAddHmac: true
+netNumbersAPICallActivation: true
+
+##sonus call url 
+psxHost: http://emsvm01.qa.s.vonagenetworks.net:80/emsapi/services/PSXAPI/r10_00_03
+psxName: PSX05KEWR1
+psxAPICallActivation: true
+
+## async host
+gdmHost: http://gdm-api.ctnror0.preprod.vonagenetworks.net:8080
+AsyncDelaySec: 5,10,20,30,40,50
+apeHost: https://ape-clusterip.ctnror0.qa.vonagenetworks.net
+apeActive: true
+
+
+## k8s values 
+dns: gdm-api.ctnror0.preprod.vonagenetworks.net
+limitCpu: 0.5
+limitMemory: 900Mi
+requestCpu: 0.05
+requestMemory: 300Mi
+replicasSet: 2
+imagegdmapi:
+  repository: 080385600816.dkr.ecr.us-east-1.amazonaws.com/gdm-api
+  tag: 7.0.6
+  pullPolicy: Always
+  
+## hmac proxy
+imagehmac:
+  repository: 080385600816.dkr.ecr.us-east-1.amazonaws.com/hmac-proxy
+  tag: 0.0.27
+etcdUser: GDM_APIqfat1
+etcdEnv: qfat1
+hmacURLWl: '/healthz,/health,/metrics,/process-status,.*/swagger-ui.html,.*/api-docs,.*/springfox-swagger-ui/.*,.*/swagger-resources.*'
+HmacSchema: PI
+HmacToken: GDM_API
+hmac:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+  command:
+    debugLevel: 10
+
+## zipwhip
+zipWhipHost: https://provision.zipwhip.com
+zipWhipActive: false
+
+## hdap
+hdapHost: https://my.qa6.vocal-qa.com
+hdapActive: true
+
+## zeus
+zeusHost:  https://hermes.qa5.vonagenetworks.net
+zeusCallBackActivation: true
+
+## neustar host
+neustarHost: https://uat.lidb.neustar.biz:9443/soap/LidbCnamProvisioningService?wsdl
+neustarAPICallActivation: true
+neustarCnamCid: 28686
+
+## ape quque name 
+zipwhipQueueName: zipwhip
+nexmoName: nexmo
+hdapNotifyQueueName: hdapNotify
+netnumbersQueueName: netnumbers
+didManagementQueueName: didManagement
+sonusQueueName: sonus
+s3BucketQueueName: s3Bucket
+zeusQueueName: zeus
+neustarQueueName: neustar
+
+## bitnami sealed secret
+secrets:
+  namespace: preprod-gdm
+  value: 
+    gdm: AgAMyGll0eQF1Iy9k6oFoRTFIUulCJFmu4aQ+MUVPcSfOXqldOoyFbfjios6xdVPBwY5ATZsLP5jbHIzdEhgFbV+GACXQUyuloeEkP+YFIBXIdO/yqMGQSz57xl2jCoX2Nl+V19ofujPktV+RCsXmXMjvKOjzF+B2GLhUvGKh2rOxR6EdbmFTJhzVWcrgaKmVnGlCvQY20KgSS/2iwy8eOlx6GBJXn3z5fs4KruXB3j+tYmL5+JMdTJADV3KQJJMUTquHJLGIF9IizWsV9uRnOKcTRjCgcu8HBOEeGssK5/nhaZWw+Mgo7H8bSrtcuOuzbhcoCa4trWLNnqG2KV7zsREljlypwAb8zFuZwelcmQHjOJjD+IsPUoS9m6nw1Rgw0PIebkd0LZmDltWaD6vDTMjDb4p5pzTts4Yxrp/7fXtBclc7C0vG45T1uPFQsuE7z5FE3jaIRqahKmmN7Q3E/rvCo3f30LwDUaQiiQO2tNLqkd77idXIREQhKeNz1U/9gkjUt7o/o4Eu3nfy8X01ZLsi7dV+n62ghAc3OKs9Vc3FdkYpXbj2nouVRtZ+ewq4kdagIPXoO9LKP/LRQReRZXpScv0SPhl4gzUBkCcokotO98VL/BOrZc/N8gYU4LGRDVnrnC2W7m+AY0lR53UqwPRPfXDcxyly+N0z/h4SrJpPncHq6Bz1AB7Irj8BAk43phRiD4qNg4Hvux8DU1dByBb+NZ5Brb1OPrZlsRXiK2lyC+V4rv2yNlXLNYh59jPCmjqXVijXHVkTjd11ka65FMNLPTgsRRm5eEKhH8GLB6ib09h2ynRkzDxcCOrBmhUU9BWnvKjhr4Nn5KLxuqspDaRy4j4D9PlHHKqBPLGpxIRZNIxw51aVzy85I7QOq22tq0qGHzUGH+1O+8cP0Ugda/3GBvIRhxVhr/7EQuFNJLnJ1xlmIz067OELcMuoxuHHR9EMD2hCwdquWII6jfa+brGWkvvIKzXtvkF51WrPQPeTHDPEJ3yPpV4l2cOr17pddT8KWuz1Gfbd588DVLfRxySzSCMp6+3UUtukALMJrLTUX2jf//eiAOH6Iu9PeszKwscZrr2kAUP1RCSfoKq6q33xPqULQOuaHOEh+d3UT8AA8QyVB60xFCpA7ml12HpcTZLqFjCkqiaO4yvJ+l9Zq1a8l+ythjN4gx+5VpQ8um5qSlcCiS1uyuFoyYXwW6Fwp30oXQHEdoNLwm6ruFidISVBTLcxUqe3V7qmiQ3BX5GYWEoqSfmjQJ6jNd2LQSlCqxp5FTOfBx7ntjNFxs4Hjrigw96J8PfMw/FKZD9sv2AN/E7cZMsXb3q9xfs4l3BNhA5yOS2j19OymFTpMMN4BBlzJrnFLjPprvLrllB3+ro1MtEaTsJoeLXqioHYbAVBXJdF+Kt0gJ7LpGGoKWg9vpzDi3BmBJpL8NISuC40iwKkjdQ6vPz80b6+qhrEShzDevux31b/HplZR6O6ha7PJDnpRVFm8omwDxV4ep3xknsmOKS3z2NdzCCB6eoDEpPQXsqPkJKhaNWcgZpkU9hdpFWI9AnkUayDOmffoEqEzSleLtiereYcPpoOm0=

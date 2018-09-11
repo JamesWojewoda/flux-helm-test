@@ -1,0 +1,131 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "name" . }}
+spec:
+  replicas: {{ .Values.replicasSet }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      k8s-app: {{ template "name" . }}
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ template "name" . }}
+      annotations:
+        iam.amazonaws.com/role: {{ .Values.iam.role }}
+    {{- if .Values.hmacProxyEnabled }}      
+        hmac.vonage.io/schema: 'PI'
+        etcd.vonage.io/user: {{ .Values.etcdUser | quote }}
+        etcd.vonage.io/env: {{ .Values.etcdEnv | quote }}
+        token.etcd.vonage.io/acl: 'nexmo,VBSIL,VONGateway,webServicesDID,VONAPE,webServicesLNP,VONDidTools,VONFAX,GDMPREMIER,VBC_UK'
+        hmac.vonage.io/urlwl: '/healthz,/health,/metrics,.*/swagger-ui.html,.*/api-docs,.*/springfox-swagger-ui/.*,.*/swagger-resources.*'     
+    {{- end }}       
+    spec:
+      containers:
+      {{- if .Values.hmacProxyEnabled }}   
+      - name: hmac-proxy
+        image: {{ .Values.imagehmac.repository }}:{{ .Values.imagehmac.tag }}
+        resources:
+{{ toYaml .Values.hmac.resources | indent 10 }}
+        command: 
+        - /hmac-proxy 
+        - -logtostderr
+        - -port=8080
+        - -forwardPort=8081
+        - -useEmptyRequestInHMAC=false
+{{- if .Values.hmac.command.debugLevel }}
+        - -v={{ .Values.hmac.command.debugLevel}}
+{{- end }}
+        volumeMounts:
+        - name: podinfo
+          mountPath: /usr/local
+          readOnly: true
+        ports:
+        - containerPort: 8080
+          name: http-hmac
+          protocol: TCP
+        env:
+        - name: ETCD_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "name" . }}
+              key: hmac_etcdPassword
+     {{- end }} 
+      - name: gdm-api
+        env:
+        - name: S3BUCKET
+          value: {{ .Values.s3bucket }}
+        securityContext:
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+        image: {{ .Values.imagegdmapi.repository }}:{{ .Values.imagegdmapi.tag }}
+        imagePullPolicy: {{ .Values.imagegdmapi.pullPolicy }}
+        resources:
+          limits:
+            cpu: {{ .Values.limitCpu }}
+            memory: {{ .Values.limitMemory }}
+          requests:
+            cpu: {{ .Values.requestCpu }}
+            memory: {{ .Values.requestMemory }}
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8082
+        #     scheme: HTTP
+        #   initialDelaySeconds: 200
+        #   timeoutSeconds: 5
+        #   successThreshold: 1
+        #   failureThreshold: 5
+        # readinessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8082
+        #     scheme: HTTP
+        #   initialDelaySeconds: 200
+        #   timeoutSeconds: 5
+      {{- if .Values.isDev }}
+      {{- else }}
+        command: 
+        - /usr/bin/java
+        - -Dspring.profiles.active=default
+        - -Dspring.config.location=/usr/local/gdm-api/config/,/usr/local/gdm-api/secret/db
+        - -jar
+        - /usr/local/gdm-api/gdm-api.jar
+      {{- end }}
+        volumeMounts:
+        - name: gdm-api-config
+        {{- if .Values.isDev }}
+          mountPath: /app/resources
+        {{- else }}
+          mountPath: /usr/local/gdm-api/config
+        {{- end }} 
+        ports:
+         {{- if .Values.hmacProxyEnabled }}   
+        - containerPort: 8081
+         {{- else }}
+        - containerPort: 8080
+         {{- end }} 
+          name: http-metrics
+          protocol: TCP
+    {{- if .Values.rbacEnable }}
+      serviceAccountName: {{ template "name" . }}
+    {{- end }}
+      volumes:
+      - name: gdm-api-config
+        configMap:
+          name: {{ template "name" . }}
+    {{- if .Values.hmacProxyEnabled }}  
+      - name: podinfo
+        downwardAPI:
+          items:
+            - path: "annotations"
+              fieldRef:
+                fieldPath: metadata.annotations
+      {{- end }}           
+      dnsPolicy: ClusterFirst

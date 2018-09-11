@@ -1,0 +1,6 @@
+## If true, create & use RBAC resources
+##
+rbacEnable: true
+isDev: false
+## DNS name to expose via Route 53
+# dns: gdm-api.ctnrva0.dev.vonagenetworks.net
